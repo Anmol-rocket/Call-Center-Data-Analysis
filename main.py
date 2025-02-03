@@ -268,7 +268,7 @@ class CallCenterSimulation:
         active_calls = sum(1 for agent in self.agents if agent.current_call)
         queue_length = len(self.call_queue)
         
-        # Add current statistics with colored indicators
+        
         main_table.add_row(
             "Active Calls",
             f"[green]{active_calls}[/]"
@@ -282,7 +282,7 @@ class CallCenterSimulation:
             f"[blue]{len(self.completed_calls)}[/]"
         )
         
-        # Agent status table
+        
         footer = Table(
             show_header=True,
             header_style="bold green",
@@ -315,7 +315,7 @@ class CallCenterSimulation:
         
         with Live(self._create_live_display(), refresh_per_second=4) as live:
             while self.events:
-                current_event_time, event_type, call = heapq.heappop(self.events)  # renamed from 'time' to 'current_event_time'
+                current_event_time, event_type, call = heapq.heappop(self.events)  \
                 self.current_time = current_event_time
                 
                 if event_type == "arrival":
@@ -333,7 +333,7 @@ class CallCenterSimulation:
     def generate_reports(self):
         self.console.print("\n[bold magenta]Generating Analysis Reports...[/]")
         
-        # Prepare data for analysis
+        
         calls_df = pd.DataFrame([
             {
                 'id': call.id,
@@ -347,11 +347,11 @@ class CallCenterSimulation:
             for call in self.completed_calls
         ])
         
-        # Create visualizations
-        plt.style.use('ggplot')  # Using 'ggplot' style instead of 'seaborn'
+        
+        plt.style.use('ggplot')  
         fig, axes = plt.subplots(2, 2, figsize=(15, 10))
         
-        # 1. Call Volume by Hour
+        
         calls_df['hour'] = calls_df['arrival_time'].apply(lambda x: int(x/60))
         hourly_calls = calls_df.groupby('hour').size()
         axes[0, 0].bar(hourly_calls.index, hourly_calls.values, color='skyblue')
@@ -359,13 +359,13 @@ class CallCenterSimulation:
         axes[0, 0].set_xlabel('Hour')
         axes[0, 0].set_ylabel('Number of Calls')
         
-        # 2. Wait Times by Priority
+        
         priority_wait_times = calls_df.groupby('priority')['wait_time'].mean()
         axes[0, 1].bar(priority_wait_times.index, priority_wait_times.values, color='lightgreen')
         axes[0, 1].set_title('Average Wait Times by Priority')
         axes[0, 1].set_ylabel('Wait Time (minutes)')
         
-        # 3. Queue Length Over Time
+       
         queue_times, queue_lengths = zip(*self.queue_length_history)
         axes[1, 0].plot(queue_times, queue_lengths, color='orange', linewidth=2)
         axes[1, 0].fill_between(queue_times, queue_lengths, alpha=0.3, color='orange')
@@ -373,7 +373,7 @@ class CallCenterSimulation:
         axes[1, 0].set_xlabel('Time (minutes)')
         axes[1, 0].set_ylabel('Queue Length')
         
-        # 4. Agent Performance
+        
         agent_stats = pd.DataFrame([
             {
                 'agent': agent.id,
@@ -398,7 +398,7 @@ class CallCenterSimulation:
         plt.tight_layout()
         plt.savefig('call_center_analysis.png', dpi=300, bbox_inches='tight')
         
-        # Print summary statistics
+        
         self.console.print("\n[bold green]Summary Statistics:[/]")
         
         summary_table = Table(show_header=True, header_style="bold blue", box=box.ROUNDED)
@@ -429,16 +429,16 @@ class CallCenterSimulation:
         self.console.print(summary_table)
 
 def main():
-    # Simulation parameters
+    
     params = {
         "num_agents": 5,
-        "simulation_duration": 480,  # 8 hours in minutes
-        "mean_call_arrival_rate": 0.2,  # Average of one call every 5 minutes
-        "mean_call_duration": 10,  # Average call duration of 10 minutes
-        "real_time_factor": 0.1  # Controls animation speed
+        "simulation_duration": 480, 
+        "mean_call_arrival_rate": 0.2, 
+        "mean_call_duration": 10, 
+        "real_time_factor": 0.1  
     }
     
-    # Create and run simulation
+    
     console = Console()
     
     with console.status("[bold green]Initializing simulation...") as status:
@@ -451,10 +451,10 @@ def main():
         time.sleep(1)
         console.print("\n[bold green]Starting simulation...[/]")
         
-    # Run simulation
+    
     sim.run()
     
-    # Generate reports
+    
     sim.generate_reports()
     
     console.print("\n[bold green]Simulation completed! Reports have been generated.[/]")
